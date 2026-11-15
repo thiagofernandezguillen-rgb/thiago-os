@@ -20,6 +20,7 @@ Measured on a budget Android TV (Android 11, 1 GB RAM):
 - Featured app with big icon, description and *Open* / *Favourite* buttons
 - App row (favourites first) and a full 8-column app grid
 - Long-press OK: favourite, move left/right, app info
+- English and Dutch interface (automatic, or choose under Settings → Language)
 - Settings page with shortcuts to the real Android settings (network, picture, sound, Bluetooth, casting, HDMI inputs, apps, date & time)
 - Control panel: Wi-Fi / Bluetooth / Cast / input / Do-not-disturb status, volume and brightness sliders
 - Opens the Google Play Store, launches HDMI inputs directly
@@ -30,7 +31,7 @@ Measured on a budget Android TV (Android 11, 1 GB RAM):
 |---|---|---|
 | ![](docs/img/all-apps.png) | ![](docs/img/settings.png) | ![](docs/img/context-menu.png) |
 
-> The interface is currently in **Dutch**. Translations are welcome (see *Contributing*).
+> Available in **English** and **Dutch**. It follows your TV's language automatically; change it any time under *Settings → Language*.
 
 ## Install
 
@@ -115,4 +116,4 @@ Issues and pull requests are welcome — especially translations (English, Frenc
 
 ### 🇧🇪 In het kort (Nederlands)
 
-Thiago OS is een snel startscherm zonder reclame voor Android TV. Installeer de APK, kies Thiago OS als standaard Home-app en zet desnoods de oude launcher uit met `pm disable-user` (omkeerbaar met `pm enable`). De interface is momenteel in het Nederlands.
+Thiago OS is een snel startscherm zonder reclame voor Android TV. Installeer de APK, kies Thiago OS als standaard Home-app en zet desnoods de oude launcher uit met `pm disable-user` (omkeerbaar met `pm enable`). Beschikbaar in het Nederlands en het Engels (Instellingen → Taal).

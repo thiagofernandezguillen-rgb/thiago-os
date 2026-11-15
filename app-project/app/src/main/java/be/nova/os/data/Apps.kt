@@ -6,6 +6,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.runtime.Immutable
+import be.nova.os.ui.Lang
+import be.nova.os.ui.tr
 import java.text.Collator
 import java.util.Locale
 
@@ -56,6 +58,40 @@ private val META = mapOf(
     "com.vestel.tv.speedup" to ("Hulpprogramma" to "Hulpprogramma van de tv-fabrikant."),
 )
 
+/** English categories and descriptions. */
+private val META_EN = mapOf(
+    "com.mediatek.wwtv.tvcenter" to ("Live TV" to "Watch TV channels and switch between your HDMI inputs."),
+    "com.google.android.youtube.tv" to ("Video" to "Videos, music and creators from all over the world."),
+    "com.google.android.youtube.tvmusic" to ("Music" to "Music, albums and playlists from YouTube Music."),
+    "com.netflix.ninja" to ("Movies & series" to "Series, films and documentaries whenever you want."),
+    "com.amazon.amazonvideo.livingroom" to ("Movies & series" to "Movies, series and sports from Amazon."),
+    "com.disney.disneyplus" to ("Movies & series" to "Disney, Pixar, Marvel, Star Wars and National Geographic."),
+    "be.dpgmedia.streamz" to ("Flemish series" to "Flemish and international series and films."),
+    "be.vrt.vrtnu" to ("Flemish TV" to "Shows from Eén, Canvas and Ketnet, live and on demand."),
+    "be.vrt.vrtmax" to ("Flemish TV" to "Shows from Eén, Canvas and Ketnet, live and on demand."),
+    "nl.streamgroup.vlaanderen" to ("TV channels" to "Live TV, replay and recordings with TV Vlaanderen."),
+    "nl.streamgroup.telesat" to ("TV channels" to "Live TV, replay and recordings with Telesat."),
+    "com.spotify.tv.android" to ("Music" to "Music and podcasts on your big screen."),
+    "tunein.player" to ("Radio" to "Radio stations and podcasts from around the world."),
+    "com.radio.fmradio" to ("Radio" to "Listen to radio stations over the internet."),
+    "com.tiktok.tv" to ("Video" to "Short videos from creators worldwide."),
+    "org.xbmc.kodi" to ("Media center" to "Open-source media center for all your files."),
+    "org.videolan.vlc" to ("Media player" to "Plays every video, also from USB or your network."),
+    "com.plexapp.android" to ("Media server" to "Your own movies and series from your PC or server."),
+    "tv.twitch.android.app" to ("Live" to "Live gaming and streams."),
+    "tv.pluto.android" to ("Free TV" to "Free live channels and movies."),
+    "be.goplay.goplay" to ("Flemish TV" to "Shows from VTM, Play4 and more."),
+    "com.android.vending" to ("Apps & games" to "Download new apps and games for your TV."),
+    "com.google.android.play.games" to ("Games" to "Discover and play games."),
+    "com.google.android.videos" to ("Movies & series" to "Your purchased and rented movies and series."),
+    "com.google.android.apps.tachyon" to ("Video calls" to "Video calls with family and friends."),
+    "com.mediatek.wwtv.mediaplayer" to ("Media player" to "Photos, music and videos from a USB stick."),
+    "com.logitech.circle" to ("Camera" to "View your Logitech Circle cameras."),
+    "com.neulion.smartphone.ufc.android" to ("Sports" to "UFC fights, live and on demand."),
+    "com.vestel.tv.eib" to ("Manual" to "Your TV's electronic manual."),
+    "com.vestel.tv.speedup" to ("Utility" to "Utility from the TV manufacturer."),
+)
+
 /** Standaardvolgorde zolang je zelf niets verplaatst hebt. */
 private val PRIORITY = listOf(
     "com.mediatek.wwtv.tvcenter", "com.netflix.ninja", "com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom",
@@ -88,13 +124,13 @@ class AppRepo(private val ctx: Context) {
         if (Build.VERSION.SDK_INT < 26) return "App"
         return when (ai.category) {
             ApplicationInfo.CATEGORY_GAME -> "Games"
-            ApplicationInfo.CATEGORY_AUDIO -> "Muziek & audio"
+            ApplicationInfo.CATEGORY_AUDIO -> tr("Muziek & audio", "Music & audio")
             ApplicationInfo.CATEGORY_VIDEO -> "Video"
-            ApplicationInfo.CATEGORY_IMAGE -> "Foto’s"
-            ApplicationInfo.CATEGORY_SOCIAL -> "Sociaal"
-            ApplicationInfo.CATEGORY_NEWS -> "Nieuws"
-            ApplicationInfo.CATEGORY_MAPS -> "Kaarten"
-            ApplicationInfo.CATEGORY_PRODUCTIVITY -> "Productiviteit"
+            ApplicationInfo.CATEGORY_IMAGE -> tr("Foto’s", "Photos")
+            ApplicationInfo.CATEGORY_SOCIAL -> tr("Sociaal", "Social")
+            ApplicationInfo.CATEGORY_NEWS -> tr("Nieuws", "News")
+            ApplicationInfo.CATEGORY_MAPS -> tr("Kaarten", "Maps")
+            ApplicationInfo.CATEGORY_PRODUCTIVITY -> tr("Productiviteit", "Productivity")
             else -> "App"
         }
     }
@@ -110,9 +146,9 @@ class AppRepo(private val ctx: Context) {
                 if (pkg == ctx.packageName || pkg in HIDDEN || out.containsKey(pkg)) continue
                 if (!ai.enabled || !ai.applicationInfo.enabled) continue
                 val label = ri.loadLabel(pm)?.toString()?.trim().orEmpty().ifEmpty { pkg }
-                val meta = META[pkg]
+                val meta = if (Lang.en) META_EN[pkg] else META[pkg]
                 val desc = meta?.second ?: ai.applicationInfo.loadDescription(pm)?.toString()?.trim()?.takeIf { it.isNotEmpty() }
-                    ?: "Open $label op je tv."
+                    ?: tr("Open $label op je tv.", "Open $label on your TV.")
                 val stamp = try { pm.getPackageInfo(pkg, 0).lastUpdateTime } catch (_: Exception) { 0L }
                 out[pkg] = AppEntry(pkg, ai.name, label, meta?.first ?: category(ai.applicationInfo), desc, tv, stamp)
             }

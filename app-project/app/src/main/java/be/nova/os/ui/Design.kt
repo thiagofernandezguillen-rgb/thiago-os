@@ -193,6 +193,7 @@ object Ic {
             Part("M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"),
             join = StrokeJoin.Miter)
     }
+    val globe by lazy { vec("gl", Part(circle(12f, 12f, 9f)), Part("M3 12h18"), Part("M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z")) }
     val left by lazy { vec("l", Part("M15 5l-7 7 7 7")) }
     val right by lazy { vec("r", Part("M9 5l7 7-7 7")) }
     val info by lazy { vec("n", Part(circle(12f, 12f, 9f)), Part("M12 11v6"), Part(circle(12f, 7.6f, 0.6f), Mode.SF)) }

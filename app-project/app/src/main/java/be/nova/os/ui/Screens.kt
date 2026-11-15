@@ -152,7 +152,7 @@ private fun NavPill(st: NovaState, modifier: Modifier) {
     ) {
         NavBtn(Ic.home, "Home", st.page == Page.HOME, navFocus && st.nav == 0)
         NavBtn(Ic.store, "Store", false, navFocus && st.nav == 1)
-        NavBtn(Ic.sliders, "Instellingen", st.page == Page.SETTINGS, navFocus && st.nav == 2)
+        NavBtn(Ic.sliders, tr("Instellingen", "Settings"), st.page == Page.SETTINGS, navFocus && st.nav == 2)
     }
 }
 
@@ -217,7 +217,7 @@ private fun HomePage(st: NovaState) {
         BigIcon(st, Modifier.offset(1320.dp, 150.dp).graphicsLayer { alpha = heroA.value })
         Row(Modifier.offset(90.dp, 640.dp).graphicsLayer { alpha = heroA.value }) {
             BasicText("Apps", Modifier.alignByBaseline(), style = T.rowLabel)
-            BasicText("${st.apps.size} geïnstalleerd", Modifier.alignByBaseline().padding(start = 14.dp), style = T.rowLabelSpan)
+            BasicText(tr("${st.apps.size} geïnstalleerd", "${st.apps.size} installed"), Modifier.alignByBaseline().padding(start = 14.dp), style = T.rowLabelSpan)
         }
         AppRow(st, Modifier.offset(90.dp, 710.dp).graphicsLayer { alpha = heroA.value })
         Peek(st, Modifier.offset(90.dp, 978.dp))
@@ -230,7 +230,7 @@ private fun Hero(st: NovaState, alpha: () -> Float, scrollPx: () -> Float) {
     val fav = a.pkg in st.favs
     val noOverlay = !st.cc && st.ctxApp == null
     Column(Modifier.offset(90.dp, 200.dp).width(900.dp).graphicsLayer { this.alpha = alpha() }) {
-        BasicText(((if (fav) "Favoriet · " else "") + a.cat).uppercase(NL), style = T.kicker, maxLines = 1)
+        BasicText(((if (fav) tr("Favoriet · ", "Favourite · ") else "") + a.cat).uppercase(Lang.locale), style = T.kicker, maxLines = 1)
         Spacer(Modifier.height(18.dp))
         // line-height:1.05 → regelvak van 109.2px; de glyphs (1.21em) steken er gecentreerd boven/onder uit
         Box(Modifier.fillMaxWidth().height(109.2.dp), contentAlignment = Alignment.CenterStart) {
@@ -241,7 +241,7 @@ private fun Hero(st: NovaState, alpha: () -> Float, scrollPx: () -> Float) {
             )
         }
         Spacer(Modifier.height(14.dp))
-        BasicText(if (a.tv) "Geïnstalleerd · Android TV-app" else "Geïnstalleerd · Android-app", style = T.meta)
+        BasicText(if (a.tv) tr("Geïnstalleerd · Android TV-app", "Installed · Android TV app") else tr("Geïnstalleerd · Android-app", "Installed · Android app"), style = T.meta)
         Spacer(Modifier.height(22.dp))
         BasicText(a.desc, Modifier.widthIn(max = 820.dp), style = T.desc, maxLines = 2, overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(56.dp))
@@ -261,7 +261,7 @@ private fun BtnDark(focus: Boolean) {
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Glyph(Ic.play, 22f, Color.White)
-        BasicText("Openen", style = T.btnDark)
+        BasicText(tr("Openen", "Open"), style = T.btnDark)
     }
 }
 
@@ -274,7 +274,7 @@ private fun BtnLight(fav: Boolean, focus: Boolean, scrollPx: () -> Float) {
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Glyph(Ic.starLine, 22f, Nc.ink)
-        BasicText(if (fav) "Uit favorieten halen" else "Aan favorieten toevoegen", style = T.btnLight)
+        BasicText(if (fav) tr("Uit favorieten halen", "Remove from favourites") else tr("Aan favorieten toevoegen", "Add to favourites"), style = T.btnLight)
     }
 }
 
@@ -322,7 +322,7 @@ private fun Peek(st: NovaState, modifier: Modifier) {
     val px = st.tilePx()
     Column(modifier) {
         Row {
-            BasicText("Alle apps", Modifier.alignByBaseline(), style = T.rowLabel)
+            BasicText(tr("Alle apps", "All apps"), Modifier.alignByBaseline(), style = T.rowLabel)
             BasicText("${apps.size} apps", Modifier.alignByBaseline().padding(start = 14.dp), style = T.rowLabelSpan)
         }
         Spacer(Modifier.height(22.dp))
@@ -392,9 +392,9 @@ private fun SettingsPage(st: NovaState) {
     val a = animateFloatAsState(if (show) 1f else 0f, tween(350, easing = Ez.ease), label = "set")
     Box(Modifier.fillMaxSize().graphicsLayer { alpha = a.value }) {
         Column(Modifier.offset(90.dp, 180.dp)) {
-            BasicText("Instellingen", style = T.h2)
+            BasicText(tr("Instellingen", "Settings"), style = T.h2)
             Spacer(Modifier.height(8.dp))
-            BasicText("Snelkoppelingen naar de Android-instellingen.", style = T.sub)
+            BasicText(tr("Snelkoppelingen naar de Android-instellingen.", "Shortcuts to the Android settings."), style = T.sub)
         }
         SetList(st)
         SetDetail(st)
@@ -524,7 +524,7 @@ private fun ControlCenter(st: NovaState) {
                 Spacer(Modifier.height(6.dp))
                 BasicText(st.dateLong, style = T.ccDate)
             }
-            Pill(if (sys.connected) "● Verbonden" else if (sys.wifiEnabled) "○ Geen verbinding" else "○ Geen wifi", false)
+            Pill(if (sys.connected) tr("● Verbonden", "● Connected") else if (sys.wifiEnabled) tr("○ Geen verbinding", "○ Not connected") else tr("○ Geen wifi", "○ No Wi-Fi"), false)
         }
         Spacer(Modifier.height(24.dp))
         val tiles = st.ccTiles()
@@ -534,12 +534,12 @@ private fun ControlCenter(st: NovaState) {
                 for (c in 0..1) { val k = r * 2 + c; CcTileView(tiles[k], k == focus, Modifier.weight(1f)) }
             }
         }
-        SliderRow(Ic.volume, sys.volPct, if (sys.volFixed) "Vast" else "${sys.volPct}%", focus == 6, null)
+        SliderRow(Ic.volume, sys.volPct, if (sys.volFixed) tr("Vast", "Fixed") else "${sys.volPct}%", focus == 6, null)
         if (sys.canWrite) SliderRow(Ic.sun, sys.briPct, "${sys.briPct}%", focus == 7, null)
-        else SliderRow(Ic.sun, 0, "", focus == 7, "Helderheid · Toestemming geven")
+        else SliderRow(Ic.sun, 0, "", focus == 7, tr("Helderheid · Toestemming geven", "Brightness · Grant permission"))
         Row(Modifier.fillMaxWidth().padding(top = 18.dp).padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            BasicText(if (sys.hasBattery) "Batterij ${sys.battery}%" else sys.ip?.let { "IP $it" } ?: "", style = T.foot)
-            BasicText("← → kiezen · OK openen · Terug sluiten", style = T.foot)
+            BasicText(if (sys.hasBattery) tr("Batterij ${sys.battery}%", "Battery ${sys.battery}%") else sys.ip?.let { "IP $it" } ?: "", style = T.foot)
+            BasicText(tr("← → kiezen · OK openen · Terug sluiten", "← → choose · OK open · Back close"), style = T.foot)
         }
     }
 }

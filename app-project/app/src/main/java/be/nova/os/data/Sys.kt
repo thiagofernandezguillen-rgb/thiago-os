@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import be.nova.os.ui.tr
 import java.net.Inet4Address
 import java.util.TimeZone
 import kotlin.math.abs
@@ -109,16 +110,16 @@ class Sys(private val ctx: Context) {
         volFixed = am.isVolumeFixed
         val outs = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
         val bt = outs.firstOrNull { it.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP }
-        btAudio = bt?.productName?.toString()?.takeIf { it.isNotBlank() } ?: bt?.let { "Bluetooth-luidspreker" }
+        btAudio = bt?.productName?.toString()?.takeIf { it.isNotBlank() } ?: bt?.let { tr("Bluetooth-luidspreker", "Bluetooth speaker") }
         val arc = outs.any { it.type == AudioDeviceInfo.TYPE_HDMI_ARC || (Build.VERSION.SDK_INT >= 31 && it.type == AudioDeviceInfo.TYPE_HDMI_EARC) }
         val usb = outs.any { it.type == AudioDeviceInfo.TYPE_USB_DEVICE || it.type == AudioDeviceInfo.TYPE_USB_HEADSET }
         val wired = outs.any { it.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES || it.type == AudioDeviceInfo.TYPE_WIRED_HEADSET }
         output = when {
             btAudio != null -> btAudio!!
-            arc -> "HDMI ARC (soundbar of versterker)"
-            usb -> "USB-audio"
-            wired -> "Koptelefoon"
-            else -> "Tv-luidsprekers"
+            arc -> tr("HDMI ARC (soundbar of versterker)", "HDMI ARC (soundbar or amplifier)")
+            usb -> tr("USB-audio", "USB audio")
+            wired -> tr("Koptelefoon", "Headphones")
+            else -> tr("Tv-luidsprekers", "TV speakers")
         }
     }
 
@@ -134,8 +135,8 @@ class Sys(private val ctx: Context) {
         val z = TimeZone.getDefault()
         val off = z.getOffset(System.currentTimeMillis()) / 60000
         val city = when (z.id) {
-            "Europe/Brussels" -> "Brussel"; "Europe/Amsterdam" -> "Amsterdam"; "Europe/Paris" -> "Parijs"
-            "Europe/London" -> "Londen"; "Europe/Berlin" -> "Berlijn"; "Europe/Madrid" -> "Madrid"
+            "Europe/Brussels" -> tr("Brussel", "Brussels"); "Europe/Amsterdam" -> "Amsterdam"; "Europe/Paris" -> tr("Parijs", "Paris")
+            "Europe/London" -> tr("Londen", "London"); "Europe/Berlin" -> tr("Berlijn", "Berlin"); "Europe/Madrid" -> "Madrid"
             else -> z.id.substringAfterLast('/').replace('_', ' ')
         }
         tz = "%s (GMT%s%02d:%02d)".format(city, if (off >= 0) "+" else "-", abs(off) / 60, abs(off) % 60)

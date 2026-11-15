@@ -38,6 +38,7 @@ val Context.novaStore by preferencesDataStore("nova")
 private val K_FAVS = stringSetPreferencesKey("favs")
 private val K_ORDER = stringPreferencesKey("order")
 private val K_CACHE = stringPreferencesKey("appcache")
+private val K_LANG = stringPreferencesKey("lang")
 
 enum class Page { HOME, SETTINGS }
 enum class Zone { NAV, STATUS, ACT, ROW, MENU, SET, DETAIL }
@@ -107,16 +108,17 @@ class NovaState(
         if (zone == Zone.MENU) -820f - (m / GRID_COLS - 2).coerceAtLeast(0) * 280f else 0f
     }
 
-    val setItems = listOf(
-        SetItem("net", "Netwerk & internet", Color(0xFF2F7BF6)) { Ic.wifi },
-        SetItem("disp", "Scherm & beeld", Color(0xFFFF9500)) { Ic.display },
-        SetItem("snd", "Geluid", Color(0xFFFF3B30)) { Ic.sound },
-        SetItem("bt", "Bluetooth & apparaten", Color(0xFF007AFF)) { Ic.bt },
-        SetItem("cast", "Scherm casten & spiegelen", Color(0xFF5856D6)) { Ic.cast },
-        SetItem("input", "Ingangen / Bron (HDMI)", Color(0xFF00A3A3)) { Ic.input },
+    val setItems: List<SetItem> get() = listOf(
+        SetItem("net", tr("Netwerk & internet", "Network & internet"), Color(0xFF2F7BF6)) { Ic.wifi },
+        SetItem("disp", tr("Scherm & beeld", "Display & picture"), Color(0xFFFF9500)) { Ic.display },
+        SetItem("snd", tr("Geluid", "Sound"), Color(0xFFFF3B30)) { Ic.sound },
+        SetItem("bt", tr("Bluetooth & apparaten", "Bluetooth & devices"), Color(0xFF007AFF)) { Ic.bt },
+        SetItem("cast", tr("Scherm casten & spiegelen", "Cast & screen mirroring"), Color(0xFF5856D6)) { Ic.cast },
+        SetItem("input", tr("Ingangen / Bron (HDMI)", "Inputs / Source (HDMI)"), Color(0xFF00A3A3)) { Ic.input },
         SetItem("apps", "Apps", Color(0xFF34C759)) { Ic.apps },
-        SetItem("time", "Datum & tijd", Color(0xFF8E8E93)) { Ic.time },
-        SetItem("all", "Alle Android-instellingen", Color(0xFF3A3A3C)) { Ic.cog },
+        SetItem("time", tr("Datum & tijd", "Date & time"), Color(0xFF8E8E93)) { Ic.time },
+        SetItem("lang", tr("Taal", "Language"), Color(0xFFAF52DE)) { Ic.globe },
+        SetItem("all", tr("Alle Android-instellingen", "All Android settings"), Color(0xFF3A3A3C)) { Ic.cog },
     )
 
     /* ------------------------------ laden ------------------------------ */
@@ -124,6 +126,7 @@ class NovaState(
     fun load() {
         scope.launch {
             val prefs = withContext(Dispatchers.IO) { act.novaStore.data.first() }
+            Lang.mode = prefs[K_LANG] ?: "auto"
             favs = prefs[K_FAVS] ?: emptySet()
             order = prefs[K_ORDER]?.split('\n')?.filter { it.isNotEmpty() } ?: emptyList()
             val cached = repo.deserialize(prefs[K_CACHE])
@@ -177,15 +180,25 @@ class NovaState(
         }
     }
 
-    private val wdShort = arrayOf("zo", "ma", "di", "wo", "do", "vr", "za")
-    private val wdLong = arrayOf("zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag")
-    private val monShort = arrayOf("jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec")
-    private val monLong = arrayOf("januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december")
+    private val wdShortNl = arrayOf("zo", "ma", "di", "wo", "do", "vr", "za")
+    private val wdLongNl = arrayOf("zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag")
+    private val monShortNl = arrayOf("jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec")
+    private val monLongNl = arrayOf("januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december")
+    private val wdShortEn = arrayOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+    private val wdLongEn = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+    private val monShortEn = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    private val monLongEn = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
 
     private fun cal() = Calendar.getInstance().apply { timeInMillis = minute }
     val timeText: String by derivedStateOf { val c = cal(); "%02d:%02d".format(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)) }
-    val dateShort: String by derivedStateOf { val c = cal(); "${wdShort[c.get(Calendar.DAY_OF_WEEK) - 1]} ${c.get(Calendar.DAY_OF_MONTH)} ${monShort[c.get(Calendar.MONTH)]}" }
-    val dateLong: String by derivedStateOf { val c = cal(); "${wdLong[c.get(Calendar.DAY_OF_WEEK) - 1]} ${c.get(Calendar.DAY_OF_MONTH)} ${monLong[c.get(Calendar.MONTH)]}" }
+    val dateShort: String by derivedStateOf {
+        val c = cal(); val d = c.get(Calendar.DAY_OF_WEEK) - 1; val day = c.get(Calendar.DAY_OF_MONTH); val mo = c.get(Calendar.MONTH)
+        if (Lang.en) "${wdShortEn[d]} ${monShortEn[mo]} $day" else "${wdShortNl[d]} $day ${monShortNl[mo]}"
+    }
+    val dateLong: String by derivedStateOf {
+        val c = cal(); val d = c.get(Calendar.DAY_OF_WEEK) - 1; val day = c.get(Calendar.DAY_OF_MONTH); val mo = c.get(Calendar.MONTH)
+        if (Lang.en) "${wdLongEn[d]}, ${monLongEn[mo]} $day" else "${wdLongNl[d]} $day ${monLongNl[mo]}"
+    }
 
     /* ------------------------------ toasts ------------------------------ */
 
@@ -206,15 +219,15 @@ class NovaState(
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
         try { act.startActivity(intent) } catch (_: Exception) {
             val alt = act.packageManager.getLeanbackLaunchIntentForPackage(a.pkg) ?: act.packageManager.getLaunchIntentForPackage(a.pkg)
-            if (alt == null || !Nav.open(act, listOf(alt))) toast("${a.label} kan niet geopend worden")
+            if (alt == null || !Nav.open(act, listOf(alt))) toast(tr("${a.label} kan niet geopend worden", "Can't open ${a.label}"))
         }
     }
 
     fun toggleFav(a: AppEntry?) {
         a ?: return
         val inRow = zone != Zone.MENU
-        if (a.pkg in favs) { favs = favs - a.pkg; toast("${a.label} uit favorieten") }
-        else { favs = favs + a.pkg; toast("${a.label} toegevoegd aan favorieten") }
+        if (a.pkg in favs) { favs = favs - a.pkg; toast(tr("${a.label} uit favorieten", "${a.label} removed from favourites")) }
+        else { favs = favs + a.pkg; toast(tr("${a.label} toegevoegd aan favorieten", "${a.label} added to favourites")) }
         save()
         val idx = apps.indexOfFirst { it.pkg == a.pkg }
         if (inRow) i = idx.coerceIn(0, ROW_MAX - 1) else m = idx
@@ -225,17 +238,17 @@ class NovaState(
         val l = apps.toMutableList()
         val from = l.indexOfFirst { it.pkg == a.pkg }
         val to = from + dir
-        if (from < 0 || to < 0 || to >= l.size) { toast("Kan niet verder"); return }
-        if ((l[to].pkg in favs) != (a.pkg in favs)) { toast("Favorieten staan altijd vooraan"); return }
+        if (from < 0 || to < 0 || to >= l.size) { toast(tr("Kan niet verder", "Can't move further")); return }
+        if ((l[to].pkg in favs) != (a.pkg in favs)) { toast(tr("Favorieten staan altijd vooraan", "Favourites always come first")); return }
         l[from] = l[to]; l[to] = a
         order = l.map { it.pkg }
         save()
         if (zone == Zone.MENU) m = to else if (to < ROW_MAX) i = to else { zone = Zone.MENU; m = to }
     }
 
-    fun openStore() { if (!Nav.open(act, Nav.store(act))) toast("Play Store niet gevonden") }
+    fun openStore() { if (!Nav.open(act, Nav.store(act))) toast(tr("Play Store niet gevonden", "Play Store not found")) }
 
-    fun open(list: List<Intent>, fail: String = "Dit scherm bestaat niet op deze tv") {
+    fun open(list: List<Intent>, fail: String = tr("Dit scherm bestaat niet op deze tv", "This screen isn't available on this TV")) {
         if (!Nav.open(act, list)) toast(fail)
     }
 
@@ -259,55 +272,69 @@ class NovaState(
 
     fun detailRows(key: String): List<Opt> {
         val s = sys
+        val open = tr("Openen →", "Open →")
         return when (key) {
             "net" -> listOfNotNull(
-                Opt("Wifi", when { s.wifiConnected -> "Verbonden"; s.wifiEnabled -> "Aan · niet verbonden"; else -> "Uit" }, sw = s.wifiEnabled, action = { open(Nav.NETWORK) }),
-                Opt("Ethernet", if (s.ethConnected) "Verbonden via kabel" else "Geen kabel", pill = if (s.ethConnected) "✓" else "—"),
-                Opt("IP-adres", s.ip ?: "Geen verbinding", pill = if (s.ip != null) "IPv4" else "—"),
-                Opt("Privé-DNS", s.privateDns ?: "Automatisch", sw = s.privateDns != null, action = { open(Nav.NETWORK) }),
-                Opt("Netwerkinstellingen", "Wifi kiezen, wachtwoord, proxy en IP", pill = "Openen →", action = { open(Nav.NETWORK) }),
+                Opt("Wifi", when { s.wifiConnected -> tr("Verbonden", "Connected"); s.wifiEnabled -> tr("Aan · niet verbonden", "On · not connected"); else -> tr("Uit", "Off") }, sw = s.wifiEnabled, action = { open(Nav.NETWORK) }),
+                Opt("Ethernet", if (s.ethConnected) tr("Verbonden via kabel", "Connected by cable") else tr("Geen kabel", "No cable"), pill = if (s.ethConnected) "✓" else "—"),
+                Opt(tr("IP-adres", "IP address"), s.ip ?: tr("Geen verbinding", "Not connected"), pill = if (s.ip != null) "IPv4" else "—"),
+                Opt(tr("Privé-DNS", "Private DNS"), s.privateDns ?: tr("Automatisch", "Automatic"), sw = s.privateDns != null, action = { open(Nav.NETWORK) }),
+                Opt(tr("Netwerkinstellingen", "Network settings"), tr("Wifi kiezen, wachtwoord, proxy en IP", "Choose Wi-Fi, password, proxy and IP"), pill = open, action = { open(Nav.NETWORK) }),
             )
             "disp" -> listOf(
-                Opt("Resolutie", s.displayMode.ifEmpty { "—" }, pill = s.displayTag.ifEmpty { "—" }),
-                Opt("Beeldmodus", "Beeldinstellingen van de tv", pill = "Wijzigen", action = { open(Nav.PICTURE) }),
-                Opt("Helderheid", if (s.canWrite) "${s.briPct}%" else "Toestemming nodig", pill = "Via bedieningspaneel"),
-                Opt("Scherm & geluid", "Alle beeldinstellingen van Android", pill = "Openen →", action = { open(Nav.DISPLAY) }),
+                Opt(tr("Resolutie", "Resolution"), s.displayMode.ifEmpty { "—" }, pill = s.displayTag.ifEmpty { "—" }),
+                Opt(tr("Beeldmodus", "Picture mode"), tr("Beeldinstellingen van de tv", "The TV's picture settings"), pill = tr("Wijzigen", "Change"), action = { open(Nav.PICTURE) }),
+                Opt(tr("Helderheid", "Brightness"), if (s.canWrite) "${s.briPct}%" else tr("Toestemming nodig", "Permission needed"), pill = tr("Via bedieningspaneel", "In control panel")),
+                Opt(tr("Scherm & geluid", "Display & sound"), tr("Alle beeldinstellingen van Android", "All Android display settings"), pill = open, action = { open(Nav.DISPLAY) }),
             )
             "snd" -> listOf(
-                Opt("Volume", if (s.volFixed) "Geregeld door het aangesloten apparaat" else "${s.volPct}%", pill = "Via bedieningspaneel"),
-                Opt("Geluidsuitvoer", s.output, pill = "Kiezen", action = { open(Nav.SOUND) }),
-                Opt("Geluidsinstellingen", "Surround, dialoogverbetering, HDMI ARC", pill = "Openen →", action = { open(Nav.SOUND) }),
+                Opt("Volume", if (s.volFixed) tr("Geregeld door het aangesloten apparaat", "Controlled by the connected device") else "${s.volPct}%", pill = tr("Via bedieningspaneel", "In control panel")),
+                Opt(tr("Geluidsuitvoer", "Sound output"), s.output, pill = tr("Kiezen", "Choose"), action = { open(Nav.SOUND) }),
+                Opt(tr("Geluidsinstellingen", "Sound settings"), tr("Surround, dialoogverbetering, HDMI ARC", "Surround, dialogue enhancement, HDMI ARC"), pill = open, action = { open(Nav.SOUND) }),
             )
             "bt" -> listOf(
-                Opt("Bluetooth", if (s.btOn) (s.btAudio?.let { "Aan · $it verbonden" } ?: "Aan") else "Uit", sw = s.btOn, action = { open(Nav.BLUETOOTH) }),
-                Opt("Apparaat koppelen", "Zoek naar koptelefoon, speaker of controller", pill = "Zoeken", action = { open(Nav.PAIR) }),
-                Opt("Afstandsbedieningen & accessoires", "Gekoppelde apparaten beheren", pill = "Openen →", action = { open(Nav.ALL) }),
+                Opt("Bluetooth", if (s.btOn) (s.btAudio?.let { tr("Aan · $it verbonden", "On · $it connected") } ?: tr("Aan", "On")) else tr("Uit", "Off"), sw = s.btOn, action = { open(Nav.BLUETOOTH) }),
+                Opt(tr("Apparaat koppelen", "Pair a device"), tr("Zoek naar koptelefoon, speaker of controller", "Find headphones, a speaker or a controller"), pill = tr("Zoeken", "Search"), action = { open(Nav.PAIR) }),
+                Opt(tr("Afstandsbedieningen & accessoires", "Remotes & accessories"), tr("Gekoppelde apparaten beheren", "Manage paired devices"), pill = open, action = { open(Nav.ALL) }),
             )
             "cast" -> listOf(
-                Opt("Casten ontvangen", if (s.castAvail) "Chromecast built-in: andere toestellen kunnen naar deze tv casten" else "Niet beschikbaar op deze tv",
+                Opt(tr("Casten ontvangen", "Receive casts"), if (s.castAvail) tr("Chromecast built-in: andere toestellen kunnen naar deze tv casten", "Chromecast built-in: other devices can cast to this TV") else tr("Niet beschikbaar op deze tv", "Not available on this TV"),
                     sw = s.castAvail, action = { open(Nav.CAST) }),
-                Opt("Scherm spiegelen", "Toon je gsm- of pc-scherm op de tv", pill = "Uitleg",
-                    action = { toast("Kies op je gsm of laptop ‘Casten’ en selecteer deze tv") }),
-                Opt("Laptop als (tweede) scherm", "Met een HDMI-kabel: kies daarna de juiste HDMI-ingang", pill = "Bron", action = { open(Nav.INPUTS) }),
+                Opt(tr("Scherm spiegelen", "Screen mirroring"), tr("Toon je gsm- of pc-scherm op de tv", "Show your phone or PC screen on the TV"), pill = tr("Uitleg", "How to"),
+                    action = { toast(tr("Kies op je gsm of laptop ‘Casten’ en selecteer deze tv", "On your phone or laptop choose ‘Cast’ and select this TV")) }),
+                Opt(tr("Laptop als (tweede) scherm", "Laptop as (second) screen"), tr("Met een HDMI-kabel: kies daarna de juiste HDMI-ingang", "With an HDMI cable: then choose the right HDMI input"), pill = tr("Bron", "Source"), action = { open(Nav.INPUTS) }),
             )
             "input" -> s.inputs.map { inp ->
-                Opt(inp.label, when (inp.state) { 0 -> "Apparaat aangesloten"; 1 -> "Apparaat in stand-by"; else -> "Niets aangesloten" },
-                    pill = "Kiezen", action = { open(Nav.input(inp.id) + Nav.INPUTS) })
-            } + Opt("Alle ingangen", "Het bronnenmenu van de tv", pill = "Openen →", action = { open(Nav.INPUTS) })
-            "apps" -> listOf(Opt("Apps beheren", "Opslag, rechten en verwijderen", pill = "Openen →", action = { open(Nav.APPS) })) +
-                apps.map { a -> Opt(a.label, a.cat, pill = if (a.pkg in favs) "★ Favoriet" else "Geïnstalleerd", action = { open(Nav.appInfo(a.pkg)) }) }
+                Opt(inp.label, when (inp.state) { 0 -> tr("Apparaat aangesloten", "Device connected"); 1 -> tr("Apparaat in stand-by", "Device on standby"); else -> tr("Niets aangesloten", "Nothing connected") },
+                    pill = tr("Kiezen", "Choose"), action = { open(Nav.input(inp.id) + Nav.INPUTS) })
+            } + Opt(tr("Alle ingangen", "All inputs"), tr("Het bronnenmenu van de tv", "The TV's source menu"), pill = open, action = { open(Nav.INPUTS) })
+            "apps" -> listOf(Opt(tr("Apps beheren", "Manage apps"), tr("Opslag, rechten en verwijderen", "Storage, permissions and uninstall"), pill = open, action = { open(Nav.APPS) })) +
+                apps.map { a -> Opt(a.label, a.cat, pill = if (a.pkg in favs) tr("★ Favoriet", "★ Favourite") else tr("Geïnstalleerd", "Installed"), action = { open(Nav.appInfo(a.pkg)) }) }
             "time" -> listOf(
-                Opt("Automatisch instellen", "Via netwerk", sw = s.autoTime, action = { open(Nav.DATE) }),
-                Opt("Tijdzone", s.tz, pill = "Wijzigen", action = { open(Nav.DATE) }),
-                Opt("24-uursnotatie", null, sw = s.is24, action = { open(Nav.DATE) }),
+                Opt(tr("Automatisch instellen", "Set automatically"), tr("Via netwerk", "From the network"), sw = s.autoTime, action = { open(Nav.DATE) }),
+                Opt(tr("Tijdzone", "Time zone"), s.tz, pill = tr("Wijzigen", "Change"), action = { open(Nav.DATE) }),
+                Opt(tr("24-uursnotatie", "24-hour clock"), null, sw = s.is24, action = { open(Nav.DATE) }),
             )
-            else -> listOf(Opt("Android-instellingen openen", "Opent het volledige instellingenmenu van Android", pill = "Openen →", action = { open(Nav.ALL) }))
+            "lang" -> listOf(
+                Opt(tr("Automatisch", "Automatic"), tr("Volgt de taal van je tv", "Follows your TV's language"), pill = if (Lang.mode == "auto") "✓" else tr("Kiezen", "Choose"), action = { setLang("auto") }),
+                Opt("Nederlands", "Nederlands", pill = if (Lang.mode == "nl") "✓" else tr("Kiezen", "Choose"), action = { setLang("nl") }),
+                Opt("English", "English", pill = if (Lang.mode == "en") "✓" else tr("Kiezen", "Choose"), action = { setLang("en") }),
+            )
+            else -> listOf(Opt(tr("Android-instellingen openen", "Open Android settings"), tr("Opent het volledige instellingenmenu van Android", "Opens Android's full settings menu"), pill = open, action = { open(Nav.ALL) }))
         }
     }
 
+    /** Taal wijzigen: meteen zichtbaar, bewaard en app-beschrijvingen opnieuw geladen. */
+    fun setLang(mode: String) {
+        Lang.mode = mode
+        scope.launch(Dispatchers.IO) { act.novaStore.edit { it[K_LANG] = mode } }
+        sys.refresh()
+        refreshApps()
+        toast(tr("Taal: Nederlands", "Language: English"))
+    }
     private fun primary(key: String): List<Intent> = when (key) {
         "net" -> Nav.NETWORK; "disp" -> Nav.DISPLAY; "snd" -> Nav.SOUND; "bt" -> Nav.BLUETOOTH; "cast" -> Nav.CAST
-        "input" -> Nav.INPUTS; "apps" -> Nav.APPS; "time" -> Nav.DATE; else -> Nav.ALL
+        "input" -> Nav.INPUTS; "apps" -> Nav.APPS; "time" -> Nav.DATE; "lang" -> emptyList(); else -> Nav.ALL
     }
 
     /** Indexen van rijen met een actie (focusbaar in het detailpaneel). */
@@ -318,12 +345,12 @@ class NovaState(
     fun ccTiles(): List<CcTile> {
         val s = sys
         return listOf(
-            CcTile("Wifi", when { s.wifiConnected -> "Verbonden"; s.wifiEnabled -> "Niet verbonden"; else -> "Uit" }, s.wifiEnabled, Ic.wifi),
-            CcTile("Bluetooth", if (s.btOn) (if (s.btAudio != null) "Speaker verbonden" else "Aan") else "Uit", s.btOn, Ic.bt),
-            CcTile("Casten", if (s.castAvail) "Klaar om te ontvangen" else "Uit", s.castAvail, Ic.cast),
-            CcTile("Bron", s.inputs.count { it.hdmi }.let { if (it > 0) "$it × HDMI" else "Ingangen" }, false, Ic.display),
-            CcTile("Niet storen", if (s.dnd) "Aan" else "Uit", s.dnd, Ic.moon),
-            CcTile("Instellingen", "Alle instellingen", false, Ic.cog),
+            CcTile("Wifi", when { s.wifiConnected -> tr("Verbonden", "Connected"); s.wifiEnabled -> tr("Niet verbonden", "Not connected"); else -> tr("Uit", "Off") }, s.wifiEnabled, Ic.wifi),
+            CcTile("Bluetooth", if (s.btOn) (if (s.btAudio != null) tr("Speaker verbonden", "Speaker connected") else tr("Aan", "On")) else tr("Uit", "Off"), s.btOn, Ic.bt),
+            CcTile(tr("Casten", "Cast"), if (s.castAvail) tr("Klaar om te ontvangen", "Ready to receive") else tr("Uit", "Off"), s.castAvail, Ic.cast),
+            CcTile(tr("Bron", "Source"), s.inputs.count { it.hdmi }.let { if (it > 0) "$it × HDMI" else tr("Ingangen", "Inputs") }, false, Ic.display),
+            CcTile(tr("Niet storen", "Do not disturb"), if (s.dnd) tr("Aan", "On") else tr("Uit", "Off"), s.dnd, Ic.moon),
+            CcTile(tr("Instellingen", "Settings"), tr("Alle instellingen", "All settings"), false, Ic.cog),
         )
     }
 
@@ -333,7 +360,7 @@ class NovaState(
             1 -> open(Nav.BLUETOOTH)
             2 -> open(Nav.CAST)
             3 -> open(Nav.INPUTS)
-            4 -> open(Nav.DND, "Niet storen staat op deze tv in de Android-instellingen")
+            4 -> open(Nav.DND, tr("Niet storen staat op deze tv in de Android-instellingen", "Do not disturb is in the Android settings on this TV"))
             5 -> { cc = false; go(2) }
             6 -> open(Nav.VOLUME_PANEL)
             7 -> if (!sys.canWrite) requestWrite()
@@ -342,7 +369,7 @@ class NovaState(
 
     fun requestWrite() {
         if (!Nav.open(act, Nav.writeSettings(act.packageName)))
-            toast("Deze tv heeft daar geen scherm voor; zie HERSTEL.md (appops)")
+            toast(tr("Deze tv heeft daar geen scherm voor (zie FAQ op GitHub)", "This TV has no screen for that (see the FAQ on GitHub)"))
     }
 
     private fun openCc() { cc = true; ccI = 0; sys.refresh() }
@@ -352,10 +379,10 @@ class NovaState(
     val ctxItems: List<Pair<String, ImageVector>> get() {
         val a = ctxApp ?: return emptyList()
         return listOf(
-            (if (a.pkg in favs) "Uit favorieten halen" else "Aan favorieten toevoegen") to Ic.starLine,
-            "Naar links verplaatsen" to Ic.left,
-            "Naar rechts verplaatsen" to Ic.right,
-            "App-info" to Ic.info,
+            (if (a.pkg in favs) tr("Uit favorieten halen", "Remove from favourites") else tr("Aan favorieten toevoegen", "Add to favourites")) to Ic.starLine,
+            tr("Naar links verplaatsen", "Move left") to Ic.left,
+            tr("Naar rechts verplaatsen", "Move right") to Ic.right,
+            "App info" to Ic.info,
         )
     }
 
@@ -478,7 +505,7 @@ class NovaState(
                 "down" -> { set = (set + 1).coerceAtMost(setItems.size - 1); det = 0 }
                 "up" -> if (set == 0) zone = Zone.NAV else { set--; det = 0 }
                 "right" -> { val a = actionable(detailRows(setItems[set].key)); if (a.isNotEmpty()) { zone = Zone.DETAIL; det = a.first() } }
-                "ok" -> open(primary(setItems[set].key))
+                "ok" -> { val p = primary(setItems[set].key); if (p.isEmpty()) key("right") else open(p) }
                 "back" -> go(0)
             }
             Zone.DETAIL -> {
