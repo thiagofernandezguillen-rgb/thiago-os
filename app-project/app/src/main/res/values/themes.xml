@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Nova" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Zelfde kleurverloop als de achtergrond: geen zwarte flits bij het starten. -->
+        <item name="android:windowBackground">@drawable/wall_base</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">#E9ECF6</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
