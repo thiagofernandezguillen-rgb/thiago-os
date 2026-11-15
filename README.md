@@ -34,18 +34,31 @@ Measured on a budget Android TV (Android 11, 1 GB RAM):
 
 ## Install
 
+📖 **Step-by-step install guide:** <https://thiagofernandezguillen-rgb.github.io/thiago-os/install.html>
+🇳🇱🇧🇪 **Nederlandstalige gids:** <https://thiagofernandezguillen-rgb.github.io/thiago-os/installeren.html>
+
 Requirements: Android TV / Google TV, Android 7.0 (API 24) or newer.
 
-1. Download `ThiagoOS-x.y.apk` from the [Releases](../../releases) page.
-2. Install it:
-   - **With a PC (adb):** enable *Developer options → USB debugging* on the TV, then
-     ```
-     adb connect <tv-ip>:5555
-     adb install ThiagoOS-1.0.apk
-     ```
-   - **Without a PC:** install the *Downloader* app from the Play Store, open the APK link and allow installing from unknown sources.
-3. Choose Thiago OS as home app: **Settings → Apps → Default apps → Home app**
-   (or `adb shell am start -a android.settings.HOME_SETTINGS`).
+**Easiest — Windows, one line** (TV: enable *Developer options → USB debugging*; PC and TV on the same network). Open PowerShell and paste:
+
+```powershell
+irm https://thiagofernandezguillen-rgb.github.io/thiago-os/install.ps1 | iex
+```
+
+It downloads Google's official `adb` and the latest APK, installs Thiago OS, opens the *Home app* chooser and — only if you say yes — disables the stock launcher. Run it again and choose **2** to undo everything. ([read the script](docs/install.ps1))
+
+**TV only — Downloader app:** install *Downloader* from the Play Store, allow it under *Unknown sources*, and enter
+`thiagofernandezguillen-rgb.github.io/thiago-os/ThiagoOS.apk`
+
+**Manual (adb):**
+
+```
+adb connect <tv-ip>:5555
+adb install ThiagoOS.apk
+adb shell am start -a android.settings.HOME_SETTINGS
+```
+
+Latest APK: [ThiagoOS.apk](https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk)
 
 ### The Home button still opens the old launcher?
 

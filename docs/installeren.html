@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thiago OS installeren — stap voor stap</title>
+<meta name="description" content="Zo installeer je Thiago OS op je Android TV of Google TV: met de Downloader-app, je gsm, een USB-stick of een installatieprogramma van één regel voor Windows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="./">Thiago OS</a>
+  <a href="./">Home</a>
+  <a href="install.html">Install (EN)</a>
+  <a class="on" href="installeren.html">Installeren</a>
+  <a href="faq.html">FAQ</a>
+  <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os">GitHub</a>
+  <a class="dl" href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">Download</a>
+</div></nav>
+
+<header class="page"><div class="wrap narrow">
+  <h1><span class="grad">Thiago OS</span> installeren</h1>
+  <p class="sub">Werkt op Android TV en Google TV vanaf Android 7.0. Duurt ongeveer 5 minuten. Alles kan teruggezet worden.</p>
+  <div class="toc">
+    <a href="#kies">1. Kies een manier</a><a href="#home">2. Als startscherm instellen</a><a href="#bijwerken">Bijwerken</a><a href="#verwijderen">Verwijderen</a><a href="#hulp">Problemen</a>
+  </div>
+</div></header>
+
+<main class="wrap narrow guide">
+
+<h2 id="kies">1. Kies hoe je installeert</h2>
+<div class="methods">
+  <a class="method" href="#pc"><i>MAKKELIJKST · DOET ALLES</i><b>💻 Windows-pc — één regel</b><span>Plak één regel en beantwoord de vragen. Lost ook de Home-knop op.</span></a>
+  <a class="method" href="#downloader"><i>ZONDER PC</i><b>📺 Alleen de tv — Downloader-app</b><span>Typ één webadres op je tv.</span></a>
+  <a class="method" href="#gsm"><b>📱 Vanaf je gsm</b><span>Stuur het bestand naar je tv met "Send Files to TV".</span></a>
+  <a class="method" href="#usb"><b>💾 USB-stick</b><span>Bestand erop zetten, in de tv steken, installeren.</span></a>
+</div>
+
+<h3 id="pc">💻 Manier A — Windows-pc (installatie in één regel)</h3>
+<p>Het programma haalt de officiële <code>adb</code>-tool van Google en de nieuwste Thiago OS op, verbindt via wifi met je tv, installeert de app en helpt je hem als startscherm in te stellen. Pc en tv moeten op <b>hetzelfde netwerk</b> zitten.</p>
+<ol class="steps">
+  <li><b>Zet de ontwikkelaarsmodus aan op je tv:</b> Instellingen → Apparaatvoorkeuren → Info → klik <b>7 keer op Build</b>. <br><span style="color:var(--mute)">(Google TV: Instellingen → Systeem → Info → Android TV OS-build.)</span></li>
+  <li><b>Zet USB-foutopsporing aan:</b> Instellingen → Apparaatvoorkeuren → <b>Opties voor ontwikkelaars</b> → <b>USB-foutopsporing</b> = aan. <span style="color:var(--mute)">(Heeft je tv ook "Netwerk-foutopsporing"? Zet die ook aan.)</span></li>
+  <li><b>Zoek het IP-adres van je tv:</b> Instellingen → Netwerk en internet → je netwerk (bv. <code>192.168.1.50</code>).</li>
+  <li><b>Op je pc:</b> druk op <kbd>Start</kbd>, typ <b>PowerShell</b>, open het, plak deze regel en druk op <kbd>Enter</kbd>:
+    <pre><code>irm https://thiagofernandezguillen-rgb.github.io/thiago-os/install.ps1 | iex</code></pre></li>
+  <li>Kies <b>1</b> en typ het IP-adres van je tv. Kies op de tv <b>"Altijd toestaan vanaf deze computer"</b> → <b>OK</b>.</li>
+  <li>Verschijnt op je tv het scherm <b>Startscherm-app</b>? Kies <b>Thiago OS</b>. Gaat de Home-knop daarna nog naar het oude scherm, dan vraagt het programma of het de oude launcher mag uitzetten — antwoord <b>j</b>. Klaar! 🎉</li>
+</ol>
+<div class="box"><b>Is dit veilig?</b> Het script is kort en leesbaar: <a href="install.ps1">bekijk install.ps1</a>. Het verwijdert nooit iets van je tv en zet de oude launcher alleen uit als jij "ja" zegt. Start het opnieuw en kies <b>2</b> om alles terug te zetten.</div>
+
+<h3 id="downloader">📺 Manier B — alleen de tv, met de Downloader-app</h3>
+<ol class="steps">
+  <li>Open op je tv de <b>Google Play Store</b>, zoek <b>Downloader</b> (van AFTVnews) en installeer het.</li>
+  <li>Geef het toestemming om apps te installeren: Instellingen → Apps → <b>Beveiliging en beperkingen</b> → <b>Onbekende bronnen</b> → zet <b>Downloader</b> aan.</li>
+  <li>Open Downloader en typ dit adres:
+    <pre><code>thiagofernandezguillen-rgb.github.io/thiago-os/ThiagoOS.apk</code></pre></li>
+  <li>Druk op <b>Go</b> → <b>Installeren</b> → <b>Klaar</b>. Ga daarna verder met <a href="#home">stap 2</a>.</li>
+</ol>
+
+<h3 id="gsm">📱 Manier C — vanaf je Android-gsm</h3>
+<ol class="steps">
+  <li>Installeer <b>Send Files to TV</b> op je gsm <i>én</i> op je tv (allebei uit de Play Store).</li>
+  <li>Download op je gsm <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">ThiagoOS.apk</a>.</li>
+  <li>Open Send Files to TV op beide toestellen: <b>Receive</b> op de tv, <b>Send</b> op de gsm → kies <code>ThiagoOS.apk</code>.</li>
+  <li>Open op de tv het ontvangen bestand en kies <b>Installeren</b> (sta "onbekende bronnen" toe als dat gevraagd wordt). Verder met <a href="#home">stap 2</a>.</li>
+</ol>
+
+<h3 id="usb">💾 Manier D — USB-stick</h3>
+<ol class="steps">
+  <li>Download <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">ThiagoOS.apk</a> op je computer en zet het op een USB-stick.</li>
+  <li>Steek de stick in de tv. Open een bestandsbeheerder (bv. <b>File Commander</b> of <b>X-plore</b> uit de Play Store, of de mediaspeler van je tv).</li>
+  <li>Kies <code>ThiagoOS.apk</code> → <b>Installeren</b> (sta "onbekende bronnen" toe als dat gevraagd wordt). Verder met <a href="#home">stap 2</a>.</li>
+</ol>
+
+<h2 id="home">2. Thiago OS als startscherm instellen</h2>
+<ol class="steps">
+  <li>Open <b>Instellingen → Apps → Standaard-apps → Startscherm-app</b> (op sommige tv's: Instellingen → Apps → <b>Speciale app-toegang</b> → Startscherm-app) en kies <b>Thiago OS</b>.</li>
+  <li>Druk op <b>Home</b> op je afstandsbediening. Opent Thiago OS? Dan ben je klaar! 🎉</li>
+</ol>
+<div class="box warn">
+  <p><b>Gaat de Home-knop nog naar het oude scherm?</b> Op veel Android TV- en Google TV-toestellen heeft de standaardlauncher een ingebouwde voorrang en negeert hij je keuze. Dat los je alleen op door de oude launcher <b>uit te zetten</b> (niet te verwijderen) — volledig omkeerbaar. Het makkelijkst met <a href="#pc">manier A</a>: die doet het voor je na je toestemming. Handmatig, met <code>adb</code> op een pc:</p>
+  <pre><code>adb connect &lt;IP-van-tv&gt;:5555
+# Android TV:
+adb shell pm disable-user --user 0 com.google.android.tvlauncher
+adb shell pm disable-user --user 0 com.google.android.tvrecommendations
+# Google TV (in plaats van tvlauncher):
+adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx</code></pre>
+  <p>Terugzetten kan altijd: vervang <code>disable-user --user 0</code> door <code>enable</code>. Verwijder nooit systeemapps.</p>
+</div>
+<p>Ook zonder deze stap kun je Thiago OS altijd openen vanuit de lijst met apps op je tv.</p>
+
+<h2 id="bijwerken">Bijwerken</h2>
+<p>Installeer de nieuwste <code>ThiagoOS.apk</code> op dezelfde manier als de eerste keer (of start het Windows-programma opnieuw en kies 1). Je favorieten en volgorde blijven bewaard.</p>
+
+<h2 id="verwijderen">Verwijderen / terug naar het oude scherm</h2>
+<ul>
+  <li><b>Windows:</b> start de installatieregel opnieuw en kies <b>2</b> — de oude launcher gaat terug aan en Thiago OS wordt verwijderd.</li>
+  <li><b>Op de tv:</b> heb je de oude launcher uitgezet, zet hem dan eerst terug aan (Instellingen → Apps → Alle apps → Systeemapps tonen → <i>Android TV-startscherm</i> / <i>Google TV Home</i> → Inschakelen). Daarna Instellingen → Apps → Thiago OS → Verwijderen.</li>
+  <li><b>adb:</b> <code>adb shell pm enable com.google.android.tvlauncher</code> en daarna <code>adb uninstall be.nova.os</code>.</li>
+</ul>
+
+<h2 id="hulp">Problemen oplossen</h2>
+<details><summary>"Installatie geblokkeerd" of er gebeurt niets bij het openen van de APK</summary><p>Sta "onbekende bronnen" toe voor de app die je gebruikt (Downloader, bestandsbeheerder, Send Files to TV): Instellingen → Apps → Beveiliging en beperkingen → Onbekende bronnen.</p></details>
+<details><summary>Het programma kan niet verbinden met mijn tv</summary><ul><li>Pc en tv moeten op hetzelfde netwerk zitten (geen gastnetwerk).</li><li>USB-foutopsporing moet aan staan; heeft je tv "Netwerk-foutopsporing" of "ADB via netwerk", zet die ook aan.</li><li>Controleer het IP-adres opnieuw — dat kan veranderen na een herstart.</li><li>Kijk naar de tv: je moet <b>OK / Altijd toestaan</b> kiezen bij de melding over foutopsporing.</li></ul></details>
+<details><summary>Ik zie een leeg scherm of "laden" na het drukken op Home</summary><p>Wacht enkele seconden — de eerste start na installatie duurt iets langer. Blijft het zo, zet dan de oude launcher terug aan (zie <a href="#verwijderen">Verwijderen</a>) en <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/issues">meld het probleem</a> met merk en model van je tv.</p></details>
+<p>Kom je er niet uit? <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/issues/new">Meld het op GitHub</a> met het merk, het model en de Android-versie van je tv.</p>
+
+</main>
+<footer><div class="wrap">Thiago OS · <a href="faq.html">FAQ</a> · <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os">GitHub</a> · Systeemapps uitzetten is op eigen risico.</div></footer>
+<script>
+document.querySelectorAll('pre').forEach(p => { const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Kopiëren';
+  b.onclick = () => navigator.clipboard.writeText(p.querySelector('code').innerText.trim()).then(() => { b.textContent = 'Gekopieerd ✓'; setTimeout(() => b.textContent = 'Kopiëren', 1500); }); p.appendChild(b); });
+</script>
+</body>
+</html>

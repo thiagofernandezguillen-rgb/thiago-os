@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Thiago OS — step-by-step guide</title>
+<meta name="description" content="How to install Thiago OS on your Android TV or Google TV: with the Downloader app, your phone, a USB stick, or a one-line Windows installer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="top"><div class="wrap">
+  <a class="logo" href="./">Thiago OS</a>
+  <a href="./">Home</a>
+  <a class="on" href="install.html">Install</a>
+  <a href="installeren.html">Installeren (NL)</a>
+  <a href="faq.html">FAQ</a>
+  <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os">GitHub</a>
+  <a class="dl" href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">Download</a>
+</div></nav>
+
+<header class="page"><div class="wrap narrow">
+  <h1>Install <span class="grad">Thiago OS</span></h1>
+  <p class="sub">Works on Android TV and Google TV with Android 7.0 or newer. Takes about 5 minutes. Everything can be undone.</p>
+  <div class="toc">
+    <a href="#choose">1. Choose a method</a><a href="#home">2. Make it your home screen</a><a href="#update">Update</a><a href="#uninstall">Uninstall</a><a href="#help">Troubleshooting</a>
+  </div>
+</div></header>
+
+<main class="wrap narrow guide">
+
+<h2 id="choose">1. Choose how to install</h2>
+<div class="methods">
+  <a class="method" href="#pc"><i>EASIEST · DOES EVERYTHING</i><b>💻 Windows PC — one line</b><span>Paste one line, follow the questions. Also fixes the Home button.</span></a>
+  <a class="method" href="#downloader"><i>NO PC</i><b>📺 TV only — Downloader app</b><span>Type one web address on your TV.</span></a>
+  <a class="method" href="#phone"><b>📱 From your phone</b><span>Send the file to your TV with "Send Files to TV".</span></a>
+  <a class="method" href="#usb"><b>💾 USB stick</b><span>Copy the file, plug it into the TV, install.</span></a>
+</div>
+
+<h3 id="pc">💻 Method A — Windows PC (one-line installer)</h3>
+<p>The installer downloads Google's official <code>adb</code> tool and the latest Thiago OS, connects to your TV over Wi-Fi, installs the app and helps you set it as home screen. Your PC and TV must be on the <b>same Wi-Fi/network</b>.</p>
+<ol class="steps">
+  <li><b>Turn on developer mode on your TV:</b> Settings → Device Preferences → About → click <b>Build</b> 7 times. <br><span style="color:var(--mute)">(Google TV: Settings → System → About → Android TV OS build.)</span></li>
+  <li><b>Turn on USB debugging:</b> Settings → Device Preferences → <b>Developer options</b> → <b>USB debugging</b> = on. <span style="color:var(--mute)">(Some TVs also have "Network debugging" — turn that on too.)</span></li>
+  <li><b>Find your TV's IP address:</b> Settings → Network &amp; Internet → your network (looks like <code>192.168.1.50</code>).</li>
+  <li><b>On your PC:</b> press <kbd>Start</kbd>, type <b>PowerShell</b>, open it, paste this line and press <kbd>Enter</kbd>:
+    <pre><code>irm https://thiagofernandezguillen-rgb.github.io/thiago-os/install.ps1 | iex</code></pre></li>
+  <li>Choose <b>1</b>, type your TV's IP address. On the TV, choose <b>"Always allow from this computer"</b> → <b>OK</b>.</li>
+  <li>When the <b>Home app</b> screen appears on your TV, select <b>Thiago OS</b>. If the Home button still opens the old launcher, the installer asks whether it may disable it — answer <b>y</b>. Done! 🎉</li>
+</ol>
+<div class="box"><b>Is this safe?</b> The script is short and readable: <a href="install.ps1">view install.ps1</a>. It never uninstalls anything from your TV and only disables the old launcher if you say yes. Run it again and choose <b>2</b> to undo everything.</div>
+
+<h3 id="downloader">📺 Method B — TV only, with the Downloader app</h3>
+<ol class="steps">
+  <li>On your TV open the <b>Google Play Store</b>, search for <b>Downloader</b> (by AFTVnews) and install it.</li>
+  <li>Allow it to install apps: Settings → Apps → <b>Security &amp; restrictions</b> → <b>Unknown sources</b> → turn on <b>Downloader</b>. <span style="color:var(--mute)">(Google TV: Settings → Apps → Security &amp; Restrictions → Unknown sources.)</span></li>
+  <li>Open Downloader and type this address:
+    <pre><code>thiagofernandezguillen-rgb.github.io/thiago-os/ThiagoOS.apk</code></pre></li>
+  <li>Press <b>Go</b> → <b>Install</b> → <b>Done</b>. Then continue with <a href="#home">step 2</a>.</li>
+</ol>
+
+<h3 id="phone">📱 Method C — from your Android phone</h3>
+<ol class="steps">
+  <li>Install <b>Send Files to TV</b> on your phone <i>and</i> on your TV (both from the Play Store).</li>
+  <li>On your phone, download <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">ThiagoOS.apk</a>.</li>
+  <li>Open Send Files to TV on both devices: <b>Receive</b> on the TV, <b>Send</b> on the phone → pick <code>ThiagoOS.apk</code>.</li>
+  <li>On the TV, open the received file and choose <b>Install</b> (allow "unknown sources" for Send Files to TV if asked). Continue with <a href="#home">step 2</a>.</li>
+</ol>
+
+<h3 id="usb">💾 Method D — USB stick</h3>
+<ol class="steps">
+  <li>Download <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/releases/latest/download/ThiagoOS.apk">ThiagoOS.apk</a> on your computer and copy it to a USB stick.</li>
+  <li>Plug the stick into the TV. Open a file manager on the TV (for example <b>File Commander</b> or <b>X-plore</b> from the Play Store, or the TV's own media player).</li>
+  <li>Select <code>ThiagoOS.apk</code> → <b>Install</b> (allow "unknown sources" for the file manager if asked). Continue with <a href="#home">step 2</a>.</li>
+</ol>
+
+<h2 id="home">2. Make Thiago OS your home screen</h2>
+<ol class="steps">
+  <li>Open <b>Settings → Apps → Default apps → Home app</b> (on some TVs: Settings → Apps → <b>Special app access</b> → Home app) and choose <b>Thiago OS</b>.</li>
+  <li>Press <b>Home</b> on your remote. If Thiago OS opens: you're done! 🎉</li>
+</ol>
+<div class="box warn">
+  <p><b>The Home button still opens the old screen?</b> On many Android TV and Google TV devices the stock launcher has a built-in higher priority and ignores your choice. The only fix is to <b>disable</b> (not uninstall) the stock launcher — fully reversible. Easiest: use <a href="#pc">Method A</a>, it does this for you after asking. Manually, with <code>adb</code> from a PC:</p>
+  <pre><code>adb connect &lt;TV-IP&gt;:5555
+# Android TV:
+adb shell pm disable-user --user 0 com.google.android.tvlauncher
+adb shell pm disable-user --user 0 com.google.android.tvrecommendations
+# Google TV (instead of tvlauncher):
+adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx</code></pre>
+  <p>Undo any time: replace <code>disable-user --user 0</code> with <code>enable</code>. Never <i>uninstall</i> system apps.</p>
+</div>
+<p>Even without this step you can always open Thiago OS from your TV's apps list.</p>
+
+<h2 id="update">Updating</h2>
+<p>Install the newest <code>ThiagoOS.apk</code> the same way you installed it the first time (or run the Windows installer again and choose 1). Your favourites and app order are kept.</p>
+
+<h2 id="uninstall">Uninstall / go back</h2>
+<ul>
+  <li><b>Windows:</b> run the one-line installer again and choose <b>2</b> — it re-enables the old launcher and removes Thiago OS.</li>
+  <li><b>On the TV:</b> if you disabled the old launcher, first re-enable it (Settings → Apps → See all apps → Show system apps → <i>Android TV Home</i> / <i>Google TV Home</i> → Enable). Then Settings → Apps → Thiago OS → Uninstall.</li>
+  <li><b>adb:</b> <code>adb shell pm enable com.google.android.tvlauncher</code> then <code>adb uninstall be.nova.os</code>.</li>
+</ul>
+
+<h2 id="help">Troubleshooting</h2>
+<details><summary>"Install blocked" or nothing happens when I open the APK</summary><p>Allow installing unknown apps for the app you're using (Downloader, file manager, Send Files to TV): Settings → Apps → Security &amp; restrictions → Unknown sources.</p></details>
+<details><summary>The installer can't connect to my TV</summary><ul><li>PC and TV must be on the same network (not a guest network).</li><li>USB debugging must be on; if your TV has "Network debugging" or "ADB over network", turn that on too.</li><li>Check the IP address again — it can change after a restart.</li><li>Look at the TV: you must press <b>OK / Always allow</b> on the debugging prompt.</li></ul></details>
+<details><summary>I see a blank or "loading" screen after pressing Home</summary><p>Wait a few seconds — the first start after installing takes a bit longer. If it persists, re-enable the old launcher (see <a href="#uninstall">Uninstall</a>) and <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/issues">open an issue</a> with your TV brand and model.</p></details>
+<details><summary>The interface is in Dutch</summary><p>Yes — version 1.0 is Dutch only. English and more languages are planned; translations are welcome on GitHub.</p></details>
+<p>Still stuck? <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os/issues/new">Open an issue on GitHub</a> and mention your TV brand, model and Android version.</p>
+
+</main>
+<footer><div class="wrap">Thiago OS · <a href="faq.html">FAQ</a> · <a href="https://github.com/thiagofernandezguillen-rgb/thiago-os">GitHub</a> · Disabling system apps is at your own risk.</div></footer>
+<script>
+document.querySelectorAll('pre').forEach(p => { const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = () => navigator.clipboard.writeText(p.querySelector('code').innerText.trim()).then(() => { b.textContent = 'Copied ✓'; setTimeout(() => b.textContent = 'Copy', 1500); }); p.appendChild(b); });
+</script>
+</body>
+</html>
